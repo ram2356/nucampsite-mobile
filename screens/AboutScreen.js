@@ -1,10 +1,10 @@
-import { ScrollView } from "react-native";
-import { Card, Text, ListItem, Avatar } from "react-native-elements";
+import { ScrollView, Text } from "react-native";
+import { Avatar, Card, ListItem } from "react-native-elements";
 import { useSelector } from "react-redux";
 import { baseUrl } from "../shared/baseUrl";
 import Loading from "../components/LoadingComponent";
 
-const Mission = () => {
+function Mission() {
   return (
     <Card>
       <Card.Title>Our Mission</Card.Title>
@@ -20,7 +20,7 @@ const Mission = () => {
       </Text>
     </Card>
   );
-};
+}
 
 const AboutScreen = () => {
   const partners = useSelector((state) => state.partners);
@@ -37,7 +37,6 @@ const AboutScreen = () => {
       </ScrollView>
     );
   }
-
   if (partners.errMess) {
     return (
       <ScrollView>
@@ -50,7 +49,6 @@ const AboutScreen = () => {
       </ScrollView>
     );
   }
-
   return (
     <ScrollView>
       <Mission />

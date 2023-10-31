@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const favoritesSlice = createSlice({
   name: "favorites",
   initialState: [],
-  reducer: {
+  reducers: {
     toggleFavorite: (favorites, action) => {
       if (favorites.includes(action.payload)) {
         return favorites.filter((favorite) => favorite !== action.payload);

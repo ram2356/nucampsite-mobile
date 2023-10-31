@@ -29,30 +29,26 @@ const AboutScreen = () => {
   if (partners.isLoading) {
     return (
       <ScrollView>
-        <Animatable.View
-          animation='fadeInDown'
-          duration={2000}
-          delay={1000}
-        >
           <Mission />
           <Card>
             <Card.Title>Community Partners</Card.Title>
             <Card.Divider />
             <Loading />
           </Card>
-        </Animatable.View>
       </ScrollView>
     );
   }
   if (partners.errMess) {
     return (
       <ScrollView>
-        <Mission />
-        <Card>
-          <Card.Title>Community Partners</Card.Title>
-          <Card.Divider />
-          <Text>{partners.errMess}</Text>
-        </Card>
+        <Animatable.View animation="fadeInDown" duration={2000} delay={1000}>
+          <Mission />
+          <Card>
+            <Card.Title>Community Partners</Card.Title>
+            <Card.Divider />
+            <Text>{partners.errMess}</Text>
+          </Card>
+        </Animatable.View>
       </ScrollView>
     );
   }

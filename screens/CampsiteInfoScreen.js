@@ -7,7 +7,6 @@ import { Input, Rating } from "react-native-elements";
 import { postComment } from "../features/comments/commentsSlice";
 import * as Animatable from "react-native-animatable";
 
-
 const CampsiteInfoScreen = ({ route }) => {
   const [showModal, setShowModal] = useState(false);
   const [rating, setRating] = useState(5);
@@ -43,7 +42,7 @@ const CampsiteInfoScreen = ({ route }) => {
           startingValue={item.rating}
           imageSize={10}
           readonly
-          style={{ alignItems: "flexstart", paddingVertical: "5%" }}
+          style={{ alignItems: "flex-start", paddingVertical: "5%" }}
         />
         <Text
           style={{ fontSize: 12 }}

@@ -1,7 +1,10 @@
 import { useState, useEffect } from "react";
-import { View, ScrollView, StyleSheet } from "react-native";
+import { View, ScrollView, StyleSheet, Image } from "react-native";
 import { CheckBox, Input, Button, Icon } from "react-native-elements";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { baseUrl } from "../shared/baseUrl";
+import logo from "../assets/images/logo.png";
+import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
 
 const LoginTab = ({ navigation }) => {
@@ -113,6 +116,7 @@ const RegisterTab = () => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [remember, setRemember] = useState(false);
+  const [imageUrl, setImageUrl] = useState(baseUrl + "images/logo.png");
 
 const handleRegister = () => {
   const userInfo = {
@@ -139,9 +143,36 @@ const handleRegister = () => {
   }
 };
 
+const getImageFromCamera = async () => {
+  const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
+
+  if (cameraPermission.status === 'granted') {
+    const capturedImage = await ImagePicker.launchCameraAsync({
+      allowsEditing: true,
+      aspect: [1, 1],
+    });
+
+    if (capturedImage.assets) {
+      console.log(capturedImage.assets[0]);
+      setImageUrl(capturedImage.assets[0].uri);
+    }
+  }
+}
+
   return (
     <ScrollView>
       <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <Image
+            source={{ uri: imageUrl }}
+            loadingIndicatorSource={logo}
+            style={styles.image}
+          />
+          <Button 
+            title="Camera"
+            onPress={getImageFromCamera}
+          />
+        </View>
         <Input
           placeholder="Username"
           leftIcon={{ type: "font-awesome", name: "user-o" }}
@@ -202,9 +233,9 @@ const handleRegister = () => {
                 iconStyle={{
                   marginRight: 10,
                 }}
-                />
-              }
-              buttonStyle={{backgroundColor: "#5637DD",}}
+              />
+            }
+            buttonStyle={{ backgroundColor: "#5637DD" }}
           />
         </View>
       </View>
@@ -254,24 +285,35 @@ const Tab = createBottomTabNavigator();
 const styles = StyleSheet.create({
   container: {
     justifyContent: "center",
-    margin: 10
+    margin: 10,
   },
   formIcon: {
-    marginRight: 10
+    marginRight: 10,
   },
   formInput: {
     padding: 8,
-    height: 60
+    height: 60,
   },
   formCheckbox: {
     margin: 8,
-    backgroundColor: null
+    backgroundColor: null,
   },
   formButton: {
     margin: 20,
     marginRight: 40,
-    marginLeft: 40
+    marginLeft: 40,
   },
+  imageContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    margin: 10,
+  },
+  image: {
+    width: 60,
+    height: 60,
+  }
 });
 
 export default LoginScreen;

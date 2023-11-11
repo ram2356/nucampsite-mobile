@@ -19,7 +19,6 @@ const ReservationScreen = () => {
   const [hikeIn, setHikeIn] = useState(false);
   const [date, setDate] = useState(new Date());
   const [showCalendar, setShowCalendar] = useState(false);
-  const [showModal, setShowModal] = useState(false);
 
   const onDateChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -42,11 +41,9 @@ const ReservationScreen = () => {
         {
           text: "Ok",
           onPress: () => {
-            presentLocalNotification(
-              date.toLocaleDateString("en-US")
-            );
+            presentLocalNotification(date.toLocaleDateString("en-US"));
             resetForm();
-          }
+          },
         },
       ],
       { cancelable: false }
@@ -71,14 +68,14 @@ const ReservationScreen = () => {
       });
       Notifications.scheduleNotificationAsync({
         content: {
-          title: 'Your Campsite Reservation Search',
+          title: "Your Campsite Reservation Search",
           body: `Search for ${reservationDate} requested`,
         },
-        trigger: null
+        trigger: null,
       });
-    }
+    };
     let permissions = await Notifications.getPermissionsAsync();
-    
+
     if (!permissions.granted) {
       permissions = await Notifications.requestPermissionsAsync();
     }
@@ -154,7 +151,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     margin: 20,
   },
-  formLable: {
+  formLabel: {
     fontSize: 18,
     flex: 2,
   },

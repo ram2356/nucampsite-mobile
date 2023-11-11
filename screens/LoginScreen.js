@@ -6,6 +6,7 @@ import { baseUrl } from "../shared/baseUrl";
 import logo from "../assets/images/logo.png";
 import * as ImagePicker from "expo-image-picker";
 import * as SecureStore from "expo-secure-store";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const LoginTab = ({ navigation }) => {
   const [username, setUsername] = useState("");
@@ -43,7 +44,7 @@ const LoginTab = ({ navigation }) => {
       }
     });
   }, []);
-  
+
   return (
     <View style={styles.container}>
       <Input
@@ -84,7 +85,7 @@ const LoginTab = ({ navigation }) => {
               }}
             />
           }
-          buttonStyle={{backgroundColor: "#5637DD"}}
+          buttonStyle={{ backgroundColor: "#5637DD" }}
         />
       </View>
       <View style={styles.formButton}>
@@ -118,46 +119,75 @@ const RegisterTab = () => {
   const [remember, setRemember] = useState(false);
   const [imageUrl, setImageUrl] = useState(baseUrl + "images/logo.png");
 
-const handleRegister = () => {
-  const userInfo = {
-    username,
-    password,
-    firstName,
-    lastName,
-    email,
-    remember,
-  };
-  console.log(JSON.stringify(userInfo));
-  if (remember) {
-    SecureStore.setItemAsync(
-      "userinfo",
-      JSON.stringify({
-        username,
-        password,
-      })
-    ).catch((error) => console.log("Could not save user info", error));
-  } else {
-    SecureStore.deleteItemAsync("userinfo").catch((error) =>
-      console.log("Could not delete user info", error)
-    );
-  }
-};
-
-const getImageFromCamera = async () => {
-  const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
-
-  if (cameraPermission.status === 'granted') {
-    const capturedImage = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [1, 1],
-    });
-
-    if (capturedImage.assets) {
-      console.log(capturedImage.assets[0]);
-      setImageUrl(capturedImage.assets[0].uri);
+  const handleRegister = () => {
+    const userInfo = {
+      username,
+      password,
+      firstName,
+      lastName,
+      email,
+      remember,
+    };
+    console.log(JSON.stringify(userInfo));
+    if (remember) {
+      SecureStore.setItemAsync(
+        "userinfo",
+        JSON.stringify({
+          username,
+          password,
+        })
+      ).catch((error) => console.log("Could not save user info", error));
+    } else {
+      SecureStore.deleteItemAsync("userinfo").catch((error) =>
+        console.log("Could not delete user info", error)
+      );
     }
-  }
-}
+  };
+
+  const getImageFromCamera = async () => {
+    const cameraPermission = await ImagePicker.requestCameraPermissionsAsync();
+
+    if (cameraPermission.status === "granted") {
+      const capturedImage = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        aspect: [1, 1],
+      });
+
+      if (capturedImage.assets) {
+        console.log(capturedImage.assets[0]);
+        processImage(capturedImage.assets[0].uri);
+      }
+    }
+  };
+
+  const processImage = async (imgUri) => {
+    try {
+      const processedImage = await ImageManipulator.manipulateAsync(
+        imgUri,
+        [{ resize: { width: 400 } }],
+        { format: "png", compress: 1 }
+      );
+      console.log("Processed Image:", processedImage);
+      setImageUrl(processedImage.uri);
+    } catch (error) {
+      console.error("Error processing image:", error);
+    }
+  };
+
+  const getImageFromGallery = async () => {
+    const mediaLibraryPermissions = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (mediaLibraryPermissions.status === 'granted') {
+        const capturedImage = await ImagePicker.launchImageLibraryAsync({
+          allowsEditing: true,
+          aspect: [1, 1]
+        });
+
+        if (capturedImage.assets) {
+          console.log(capturedImage.assets[0]);
+          processImage(capturedImage.assets[0].uri);
+        }
+      }
+    };
 
   return (
     <ScrollView>
@@ -168,10 +198,8 @@ const getImageFromCamera = async () => {
             loadingIndicatorSource={logo}
             style={styles.image}
           />
-          <Button 
-            title="Camera"
-            onPress={getImageFromCamera}
-          />
+          <Button title="Camera" onPress={getImageFromCamera} />
+          <Button title="Gallery" onPress={getImageFromGallery}/>
         </View>
         <Input
           placeholder="Username"
@@ -241,16 +269,16 @@ const getImageFromCamera = async () => {
       </View>
     </ScrollView>
   );
-}
+};
 
 const LoginScreen = () => {
   const tabBarOptions = {
-    activeBackgroundColor: '#5637DD',
-    inactiveBackgroundColor: '#CEC8FF',
-    activeTintColor: '#fff',
-    inactiveTintColor: '#808080',
-    labelStyle: { fontSize: 16 }
-  }
+    activeBackgroundColor: "#5637DD",
+    inactiveBackgroundColor: "#CEC8FF",
+    activeTintColor: "#fff",
+    inactiveTintColor: "#808080",
+    labelStyle: { fontSize: 16 },
+  };
 
   return (
     <Tab.Navigator tabBarOptions={tabBarOptions}>
@@ -313,7 +341,7 @@ const styles = StyleSheet.create({
   image: {
     width: 60,
     height: 60,
-  }
+  },
 });
 
 export default LoginScreen;

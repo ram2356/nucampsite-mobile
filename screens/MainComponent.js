@@ -1,4 +1,12 @@
-import { Platform, View, StyleSheet, Text, Image, Alert, ToastAndroid } from "react-native";
+import {
+  Platform,
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  Alert,
+  ToastAndroid,
+} from "react-native";
 import { Icon } from "react-native-elements";
 import Constants from "expo-constants";
 import CampsiteInfoScreen from "./CampsiteInfoScreen";
@@ -220,31 +228,27 @@ const CustomDrawerContent = (props) => (
 const Main = () => {
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch(fetchCampsites());
-    dispatch(fetchPromotions());
-    dispatch(fetchPartners());
-    dispatch(fetchComments());
-  }, [dispatch]);
+  const showNetInfo = async () => {
+    try {
+      const connectionInfo = await NetInfo.fetch();
+      Platform.OS === "ios"
+        ? Alert.alert("Initial Network Connectivity Type:", connectionInfo.type)
+        : ToastAndroid.show(
+            "Initial Network Connectivity Type: " + connectionInfo.type,
+            ToastAndroid.LONG
+          );
+    } catch (error) {
+      console.error("Error fetching network information:", error);
+    }
+  };
 
   useEffect(() => {
-    NetInfo.fetch().then((connectionInfo) => {
-      Platform.OS === 'ios'
-        ? Alert.alert(
-                      'Initial Network Connectivity Type:',
-                      connectionInfo.type
-                  )
-                : ToastAndroid.show(
-                      'Initial Network Connectivity Type: ' +
-                          connectionInfo.type,
-                      ToastAndroid.LONG);
-    });
+    showNetInfo();
 
     const unsubscribeNetInfo = NetInfo.addEventListener((connectionInfo) => {
       handleConnectivityChange(connectionInfo);
     });
     return unsubscribeNetInfo;
-
   }, []);
 
   const handleConnectivityChange = (connectionInfo) => {
@@ -269,6 +273,13 @@ const Main = () => {
       ? Alert.alert("Connection change:", connectionMsg)
       : ToastAndroid.show(connectionMsg, ToastAndroid.LONG);
   };
+
+  useEffect(() => {
+    dispatch(fetchCampsites());
+    dispatch(fetchPromotions());
+    dispatch(fetchPartners());
+    dispatch(fetchComments());
+  }, [dispatch]);
 
   return (
     <View
